@@ -1,26 +1,53 @@
 #!/usr/bin/python
 
+FIFOLOC = 'fifo'
+OUTPLOC = '/home/ian/.config/pianobarfly/current.txt'
+
+
 import Tkinter
 
 class Pianobar(object):
-    def playpause(parent):
-        pass
-    def skip(parent):
-        pass
-    def love(parent):
-        pass
-    def ban(parent):
-        pass
+    def __init__(self, parent):
+        self.parent = parent
+
+        
+    def playpause(self):
+        with open(FIFOLOC, 'a') as out:             
+            out.write('p')          
+    
+    def skip(self):
+        with open(FIFOLOC, 'a') as out:             
+            out.write('n')
+	
+    def love(self):
+        with open(FIFOLOC, 'a') as out:             
+            out.write('+')
+	
+    def ban(self):
+        with open(FIFOLOC, 'a') as out:             
+            out.write('-')
+   
+    def quitP(self):
+        with open(FIFOLOC, 'a') as out:             
+            out.write('q') 
+        quit()
+
     def changeStation(parent):
         pass
 
+    def updateLabel(self):
+        with open(OUTPLOC, 'r') as inp:
+             self.parent.labelVariable = inp.read()
+                       
+        print self.parent.labelVariable
+        self.parent.after(1000, self.updateLabel) 
 
 
 class Controller(Tkinter.Tk):
-    def __init__(self,parent,pianobar):
+    def __init__(self,parent):
         Tkinter.Tk.__init__(self,parent)
         self.parent = parent
-        self.pianobar = pianobar
+        self.pianobar = Pianobar(self)
         
         self.initialize()
 
@@ -46,7 +73,8 @@ class Controller(Tkinter.Tk):
         options['menu'] = options.menu 
         options.menu.add('command', label=u"change Station...", 
                                command=self.pianobar.changeStation)
-
+        options.menu.add('command', label=u"Quit", 
+                               command=self.pianobar.quitP)
         options.grid(column=0,row=1)
 
         # Info
@@ -54,11 +82,10 @@ class Controller(Tkinter.Tk):
         info = Tkinter.Label(self, textvariable=self.labelVariable,
                              anchor='w')
         info.grid(column=0,row=3,columnspan=3,sticky='EW')
-
+        self.pianobar.updateLabel()
 
 
 if __name__ == "__main__":
-    pianobar = Pianobar()
-    app = Controller(None,pianobar) 
+    app = Controller(None) 
     app.mainloop()
 

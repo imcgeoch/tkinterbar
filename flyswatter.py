@@ -37,9 +37,8 @@ class Pianobar(object):
 
     def updateLabel(self):
         with open(OUTPLOC, 'r') as inp:
-             self.parent.labelVariable = inp.read()
-                       
-        print self.parent.labelVariable
+             self.parent.labelVariable.set( inp.read())
+
         self.parent.after(1000, self.updateLabel) 
 
 
@@ -47,8 +46,8 @@ class Controller(Tkinter.Tk):
     def __init__(self,parent):
         Tkinter.Tk.__init__(self,parent)
         self.parent = parent
+        self.labelVariable = Tkinter.StringVar() 
         self.pianobar = Pianobar(self)
-        
         self.initialize()
 
     def initialize(self):
@@ -79,10 +78,11 @@ class Controller(Tkinter.Tk):
 
         # Info
         self.labelVariable = Tkinter.StringVar()
-        info = Tkinter.Label(self, textvariable=self.labelVariable,
-                             anchor='w')
+        info = Tkinter.Message(self, textvariable=self.labelVariable,
+                             anchor='w', width=500)
         info.grid(column=0,row=3,columnspan=3,sticky='EW')
         self.pianobar.updateLabel()
+
 
 
 if __name__ == "__main__":

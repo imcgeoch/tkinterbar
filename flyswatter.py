@@ -5,6 +5,8 @@ OUTPLOC = '/home/ian/.config/pianobarfly/current.txt'
 
 
 import Tkinter
+from PIL import Image, ImageTk
+
 
 class Pianobar(object):
     def __init__(self, parent):
@@ -39,6 +41,12 @@ class Pianobar(object):
         with open(OUTPLOC, 'r') as inp:
              self.parent.labelVariable.set( inp.read())
 
+        image = Image.open("/home/ian/.config/pianobarfly/current.jpg")
+        photo = ImageTk.PhotoImage(image)
+        self.parent.label.configure(image=photo) 
+        self.parent.label.image = photo 
+
+ 
         self.parent.after(1000, self.updateLabel) 
 
 
@@ -81,8 +89,14 @@ class Controller(Tkinter.Tk):
         info = Tkinter.Message(self, textvariable=self.labelVariable,
                              anchor='w', width=500)
         info.grid(column=0,row=3,columnspan=3,sticky='EW')
-        self.pianobar.updateLabel()
 
+        image = Image.open("/home/ian/.config/pianobarfly/current.jpg")
+        self.photo = ImageTk.PhotoImage(image)
+        self.label = Tkinter.Label(image=self.photo)
+        self.label.image = self.photo 
+        self.label.pack()
+        self.label.grid(column=0,row=4, columnspan=3)
+        self.pianobar.updateLabel()
 
 
 if __name__ == "__main__":
